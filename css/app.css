@@ -1,0 +1,114 @@
+/* App chrome — hidden on print */
+.app-chrome {
+  background: var(--navy);
+  color: var(--white);
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-chrome h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  white-space: nowrap;
+}
+
+.upload-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-area label {
+  background: var(--teal);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.upload-area label:hover {
+  background: var(--mid-blue);
+}
+
+.upload-area input[type="file"] {
+  display: none;
+}
+
+.upload-status {
+  font-size: 12px;
+  color: var(--pale-blue);
+}
+
+.org-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.org-picker select {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  min-width: 250px;
+  background: white;
+  color: var(--text-dark);
+}
+
+.btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-print {
+  background: var(--orange);
+  color: white;
+}
+
+.btn-print:hover {
+  background: #d4621f;
+}
+
+.btn-print:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--text-grey);
+  font-size: 16px;
+  text-align: center;
+  gap: 15px;
+}
+
+.empty-state .icon {
+  font-size: 48px;
+  opacity: 0.4;
+}
+
+.hidden {
+  display: none !important;
+}
