@@ -45,7 +45,37 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   printBtn.addEventListener('click', printReport);
+
+  // Auto-load sample data for demo
+  loadSampleData(orgSelect, uploadStatus, emptyState, reportContainer, printBtn);
 });
+
+function loadSampleData(orgSelect, uploadStatus, emptyState, reportContainer, printBtn) {
+  fetch('data/sample.csv')
+    .then(res => {
+      if (!res.ok) throw new Error('Sample CSV not found');
+      return res.text();
+    })
+    .then(csvText => {
+      appData = processCSV(csvText);
+      populateOrgPicker(appData.orgs);
+      orgSelect.disabled = false;
+      uploadStatus.textContent = `Demo: ${appData.orgs.length} organisaties geladen`;
+
+      // Auto-select first org for instant preview
+      if (appData.orgs.length > 0) {
+        orgSelect.value = '0';
+        selectedOrg = appData.orgs[0];
+        renderReport(selectedOrg, appData.collective);
+        emptyState.classList.add('hidden');
+        reportContainer.classList.remove('hidden');
+        printBtn.disabled = false;
+      }
+    })
+    .catch(() => {
+      // Sample not available — user can still upload their own CSV
+    });
+}
 
 function populateOrgPicker(orgs) {
   const select = document.getElementById('org-select');
