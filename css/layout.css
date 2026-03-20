@@ -1,0 +1,88 @@
+:root {
+  --navy:       #1B2A4A;
+  --dark-blue:  #2B4C7E;
+  --mid-blue:   #3A7CA5;
+  --teal:       #5BA4B5;
+  --light-blue: #7EC8D8;
+  --pale-blue:  #B5DFE8;
+  --cream:      #D4C9A8;
+  --orange:     #E8712A;
+  --yellow:     #F5B731;
+  --text-dark:  #333333;
+  --text-grey:  #888888;
+  --bg-light:   #F0F3F5;
+  --white:      #FFFFFF;
+}
+
+.preview-container {
+  background: #e0e0e0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  min-height: 100vh;
+}
+
+.page {
+  width: 297mm;
+  height: 210mm;
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+.page-number-header {
+  position: absolute;
+  top: 8mm;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-grey);
+}
+
+.page-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 15mm 20mm;
+}
+
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .app-chrome {
+    display: none !important;
+  }
+
+  .preview-container {
+    background: white;
+    padding: 0;
+    gap: 0;
+  }
+
+  .page {
+    page-break-after: always;
+    margin: 0;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+
+  .page:last-child {
+    page-break-after: auto;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+}

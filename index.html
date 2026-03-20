@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Culturele Diversiteit Factsheet Generator</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/typography.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/app.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+
+<!-- App Chrome (hidden on print) -->
+<div class="app-chrome">
+  <h1>Factsheet Generator</h1>
+  <div class="upload-area">
+    <label for="csv-upload">CSV uploaden</label>
+    <input type="file" id="csv-upload" accept=".csv">
+    <span class="upload-status" id="upload-status">Geen bestand geladen</span>
+  </div>
+  <div class="org-picker">
+    <select id="org-select" disabled>
+      <option value="">— Upload eerst een CSV —</option>
+    </select>
+  </div>
+  <button class="btn btn-print" id="btn-print" disabled>Afdrukken / PDF</button>
+</div>
+
+<!-- Empty state -->
+<div class="empty-state" id="empty-state">
+  <div class="icon">&#128196;</div>
+  <p>Upload een CSV-bestand en selecteer een organisatie om de factsheet te bekijken.</p>
+</div>
+
+<!-- Report Pages -->
+<div class="preview-container hidden" id="report-pages">
+
+  <!-- PAGE 1: Cover -->
+  <div class="page" id="page-1">
+    <div class="page-content" style="display:flex; flex-direction:column; justify-content:space-between; padding:20mm 25mm;">
+      <!-- Top section -->
+      <div>
+        <div style="color:var(--text-grey); font-size:14px; margin-bottom:2px;">Cultureel Talent naar de Top</div>
+        <div style="color:var(--text-grey); font-size:14px; margin-bottom:12px;">Factsheet 2025</div>
+        <div id="cover-org-name" style="color:var(--navy); font-size:20px; font-weight:700;"></div>
+      </div>
+      <!-- Middle: large title -->
+      <div style="display:flex; justify-content:flex-end; align-items:center; flex:1;">
+        <div style="text-align:right;">
+          <div style="font-size:64px; font-weight:700; color:var(--navy); line-height:1.05;">Culturele</div>
+          <div style="font-size:64px; font-weight:700; color:var(--teal); line-height:1.05;">Diversiteit</div>
+        </div>
+      </div>
+      <!-- Bottom section -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <!-- Concentric arcs -->
+        <svg width="200" height="200" viewBox="0 0 200 200" style="flex-shrink:0;">
+          <g transform="translate(0,200)">
+            <path d="M0,0 A180,180 0 0,1 180,-180 L180,-155 A155,155 0 0,0 0,-25 Z" fill="#1B2A4A"/>
+            <path d="M0,-30 A150,150 0 0,1 150,-180 L150,-155 A125,125 0 0,0 0,-55 Z" fill="#2B4C7E"/>
+            <path d="M0,-60 A120,120 0 0,1 120,-180 L120,-155 A95,95 0 0,0 0,-85 Z" fill="#3A7CA5"/>
+            <path d="M0,-90 A90,90 0 0,1 90,-180 L90,-155 A65,65 0 0,0 0,-115 Z" fill="#5BA4B5"/>
+            <path d="M0,-120 A60,60 0 0,1 60,-180 L60,-155 A35,35 0 0,0 0,-145 Z" fill="#7EC8D8"/>
+            <path d="M0,-150 A30,30 0 0,1 30,-180 L30,-160 A10,10 0 0,0 0,-170 Z" fill="#D4C9A8"/>
+          </g>
+        </svg>
+        <!-- Logo block -->
+        <div style="text-align:right; font-size:10px; color:var(--text-grey); line-height:1.6;">
+          <div style="font-weight:700; color:var(--navy); font-size:12px;">Commissie Monitoring</div>
+          <div style="font-weight:700; color:var(--navy); font-size:12px;">Talent naar de Top</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: Inleiding -->
+  <div class="page" id="page-2">
+    <div class="page-number-header">| 2 |</div>
+    <div class="page-content" style="display:flex; flex-direction:column; padding:15mm 20mm 0 20mm;">
+      <!-- Top section -->
+      <div style="flex:1; padding-bottom:15px;">
+        <h2 style="margin-bottom:8px;">Inleiding</h2>
+        <p style="font-size:11px; line-height:1.7; max-width:85%; color:var(--text-dark);">
+          De Commissie Monitoring Talent naar de Top volgt jaarlijks de voortgang van culturele diversiteit in de top van organisaties die deelnemen aan het Charter Talent naar de Top.
+          Deze factsheet geeft uw organisatie inzicht in de huidige stand van zaken rondom culturele diversiteit, zowel kwalitatief (beleid en strategie) als kwantitatief (kengetallen).
+          Het kwalitatieve deel meet uw organisatie op zes dimensies van diversiteitsbeleid, elk beoordeeld op een schaal van 1 (oriëntatiefase) tot 4 (beheersingsfase).
+          Het kwantitatieve deel toont het aandeel werknemers met een andere culturele achtergrond in verschillende lagen van uw organisatie, vergeleken met het voorgaande jaar en met de andere deelnemende organisaties.
+        </p>
+      </div>
+      <!-- Dark bottom section -->
+      <div class="dark-band" style="margin:0 -20mm; padding:20px 25mm; flex:0 0 auto;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px 30px;">
+          <div>
+            <h4>Doelstellingen</h4>
+            <p>Het formuleren van concrete doelstellingen en streefcijfers voor culturele diversiteit in alle lagen van de organisatie.</p>
+          </div>
+          <div>
+            <h4>Strategie en management</h4>
+            <p>De verankering van diversiteitsbeleid in de bedrijfsstrategie en de actieve betrokkenheid van het management.</p>
+          </div>
+          <div>
+            <h4>HR Management</h4>
+            <p>Het inrichten van HR-processen zoals werving, selectie, beoordeling en doorstroom op een inclusieve en eerlijke manier.</p>
+          </div>
+          <div>
+            <h4>Communicatie</h4>
+            <p>De interne en externe communicatie over het belang van culturele diversiteit en de geboekte voortgang.</p>
+          </div>
+          <div>
+            <h4>Kennis en vaardigheden</h4>
+            <p>Het ontwikkelen van kennis en competenties op het gebied van culturele diversiteit bij medewerkers en leidinggevenden.</p>
+          </div>
+          <div>
+            <h4>Klimaat</h4>
+            <p>Het creëren van een inclusief werkklimaat waarin alle medewerkers zich gewaardeerd en betrokken voelen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: Kwalitatief: Uw Profiel -->
+  <div class="page" id="page-3">
+    <div class="page-number-header">| 3 |</div>
+    <div class="page-content" style="display:flex; flex-direction:column;">
+      <!-- Top section -->
+      <div style="display:flex; flex:1; gap:20px;">
+        <div style="flex:1;">
+          <h2 style="margin-bottom:2px;">Kwalitatief:</h2>
+          <h3 style="margin-bottom:10px;">uw strategie en beleid</h3>
+          <div style="color:var(--teal); font-size:16px; font-weight:700; margin-bottom:8px;">Uw profiel</div>
+          <p style="font-size:11px; line-height:1.7;">
+            De onderstaande radardiagram toont het profiel van uw organisatie op de zes dimensies van cultureel diversiteitsbeleid.
+            Elke as vertegenwoordigt een dimensie, met scores van 1 (binnenste ring) tot 4 (buitenste ring).
+            Een hogere score duidt op een meer volwassen benadering van die dimensie.
+          </p>
+        </div>
+        <div style="flex:0 0 auto; display:flex; align-items:center; justify-content:center;">
+          <canvas id="radial-page3"></canvas>
+        </div>
+      </div>
+      <!-- Divider -->
+      <div class="teal-divider"></div>
+      <!-- Dark bottom section -->
+      <div class="dark-band" style="margin:0 -20mm -15mm -20mm; padding:15px 25mm 15mm 25mm; flex:0 0 auto;">
+        <h4 style="color:var(--white); font-size:18px; margin-bottom:12px;">De zes dimensies</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px 25px;">
+          <div>
+            <h4>Leiderschap</h4>
+            <p>De mate waarin leiders zich actief inzetten voor culturele diversiteit en inclusie als strategische prioriteit.</p>
+          </div>
+          <div>
+            <h4>Strategie en management</h4>
+            <p>De integratie van diversiteitsdoelen in bedrijfsstrategie, planning en managementprocessen.</p>
+          </div>
+          <div>
+            <h4>HR Management</h4>
+            <p>Inclusieve HR-praktijken in werving, selectie, ontwikkeling, beoordeling en doorstroombeleid.</p>
+          </div>
+          <div>
+            <h4>Communicatie</h4>
+            <p>Interne en externe communicatie over diversiteitsambities, voortgang en succesverhalen.</p>
+          </div>
+          <div>
+            <h4>Kennis en vaardigheden</h4>
+            <p>Training en ontwikkeling gericht op cultureel bewustzijn en interculturele competenties.</p>
+          </div>
+          <div>
+            <h4>Klimaat</h4>
+            <p>Een inclusief werkklimaat waar verschillen worden gewaardeerd en iedereen zich thuis voelt.</p>
+          </div>
+        </div>
+        <div style="margin-top:10px; font-size:9px; color:var(--yellow);">* Culturele achtergrond is gedefinieerd volgens de CBS-definitie.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: Vier Fases -->
+  <div class="page" id="page-4">
+    <div class="page-number-header">| 4 |</div>
+    <div class="page-content" style="display:flex; flex-direction:column;">
+      <h2 style="margin-bottom:2px;">Kwalitatief:</h2>
+      <h3 style="margin-bottom:15px;">uw strategie en beleid</h3>
+      <div style="display:flex; gap:25px; flex:1;">
+        <!-- Decorative arcs -->
+        <div style="flex:0 0 120px;">
+          <svg width="120" height="160" viewBox="0 0 120 160">
+            <g transform="translate(0,160)">
+              <path d="M0,0 A100,100 0 0,1 100,-100 L100,-80 A80,80 0 0,0 0,-20 Z" fill="#2B4C7E"/>
+              <path d="M0,-25 A75,75 0 0,1 75,-100 L75,-80 A55,55 0 0,0 0,-50 Z" fill="#3A7CA5"/>
+              <path d="M0,-55 A45,45 0 0,1 45,-100 L45,-80 A25,25 0 0,0 0,-80 Z" fill="#5BA4B5"/>
+            </g>
+          </svg>
+        </div>
+        <!-- Phase descriptions -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:0;">
+          <div class="phase-row" style="background:rgba(181,223,232,0.15);">
+            <div class="phase-number">1</div>
+            <div class="phase-text">
+              <h4>Oriëntatiefase</h4>
+              <div class="phase-desc">De organisatie verkent het thema culturele diversiteit.</div>
+              <div class="phase-quote">"We zijn ons bewust van het belang, maar hebben nog geen concreet beleid."</div>
+            </div>
+            <div class="phase-color" style="background:var(--pale-blue);"></div>
+          </div>
+          <div class="phase-row" style="background:rgba(126,200,216,0.12);">
+            <div class="phase-number">2</div>
+            <div class="phase-text">
+              <h4>Ontwikkelingsfase</h4>
+              <div class="phase-desc">De organisatie ontwikkelt beleid en begint met implementatie.</div>
+              <div class="phase-quote">"We hebben plannen gemaakt en zijn begonnen met de eerste stappen."</div>
+            </div>
+            <div class="phase-color" style="background:var(--light-blue);"></div>
+          </div>
+          <div class="phase-row" style="background:rgba(58,124,165,0.08);">
+            <div class="phase-number">3</div>
+            <div class="phase-text">
+              <h4>Realisatiefase</h4>
+              <div class="phase-desc">Het beleid wordt breed uitgevoerd en verankerd in processen.</div>
+              <div class="phase-quote">"Diversiteitsbeleid is onderdeel van onze dagelijkse praktijk."</div>
+            </div>
+            <div class="phase-color" style="background:var(--mid-blue);"></div>
+          </div>
+          <div class="phase-row" style="background:rgba(27,42,74,0.05);">
+            <div class="phase-number">4</div>
+            <div class="phase-text">
+              <h4>Beheersingsfase</h4>
+              <div class="phase-desc">Diversiteit is integraal verankerd en wordt continu verbeterd.</div>
+              <div class="phase-quote">"Culturele diversiteit is vanzelfsprekend in alles wat we doen."</div>
+            </div>
+            <div class="phase-color" style="background:var(--navy);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 5: Three Radial Charts -->
+  <div class="page" id="page-5">
+    <div class="page-number-header">| 5 |</div>
+    <div class="page-content" style="display:flex; flex-direction:column;">
+      <h2 style="margin-bottom:2px;">Kwalitatief:</h2>
+      <h3 style="margin-bottom:10px;">uw strategie en beleid</h3>
+      <div style="display:flex; flex:1; gap:10px;">
+        <!-- Left: org chart (large) -->
+        <div style="flex:0 0 50%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div style="color:var(--teal); font-size:14px; font-weight:700; margin-bottom:5px;">Uw profiel</div>
+          <canvas id="radial-page5-org"></canvas>
+        </div>
+        <!-- Right: average + benchmark -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+          <!-- Average -->
+          <div style="display:flex; align-items:center; gap:10px; flex:1;">
+            <div style="flex:1;">
+              <div style="color:var(--teal); font-size:13px; font-weight:700; margin-bottom:3px;">Het gemiddelde</div>
+              <p style="font-size:9px; line-height:1.5; color:var(--text-dark);">
+                Het gemiddelde profiel van alle deelnemende organisaties aan de monitor.
+              </p>
+            </div>
+            <canvas id="radial-page5-avg"></canvas>
+          </div>
+          <!-- Benchmark -->
+          <div style="display:flex; align-items:center; gap:10px; flex:1;">
+            <div style="flex:1;">
+              <div style="color:var(--orange); font-size:13px; font-weight:700; margin-bottom:3px;">De benchmark</div>
+              <p style="font-size:9px; line-height:1.5; color:var(--text-dark);">
+                De hoogste scores per dimensie over alle deelnemende organisaties — het best haalbare profiel.
+              </p>
+            </div>
+            <canvas id="radial-page5-bench"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 6: Kwantitatief Tables -->
+  <div class="page" id="page-6">
+    <div class="page-number-header">| 6 |</div>
+    <div class="page-content" style="display:flex; flex-direction:column;">
+      <h2 style="margin-bottom:2px;">Kwantitatief</h2>
+      <h3 style="margin-bottom:15px;">uw situatie in kengetallen</h3>
+
+      <!-- Ambitie section -->
+      <div style="margin-bottom:18px;">
+        <h4 style="color:var(--teal); margin-bottom:6px;">Uw ambitie</h4>
+        <p style="font-size:10px; line-height:1.6; margin-bottom:8px;">
+          Het streefcijfer is het percentage werknemers met een andere culturele achtergrond dat uw organisatie nastreeft in de top.
+        </p>
+        <table class="ambitie-table" style="max-width:450px;">
+          <thead>
+            <tr>
+              <th></th>
+              <th id="ambitie-org-name">M 2025 Organisatie</th>
+              <th>Gemiddelde alle organisaties</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left; font-weight:500;">Streefpercentage werknemers<br>met een andere culturele<br>achtergrond in de top</td>
+              <td id="ambitie-org-val">—</td>
+              <td id="ambitie-avg-val">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Main table section -->
+      <div>
+        <h4 style="color:var(--teal); margin-bottom:6px;">Aandeel werknemers met een andere culturele achtergrond</h4>
+        <p style="font-size:10px; line-height:1.6; margin-bottom:8px;">
+          Onderstaande tabel toont het aantal en percentage werknemers met een andere culturele achtergrond per organisatielaag,
+          vergeleken met het voorgaande meetmoment.
+        </p>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:20%;">Organisatielaag</th>
+              <th class="num" style="width:12%;">M 2024<br>Aantal</th>
+              <th class="num" style="width:14%;">M 2024<br>Percentage</th>
+              <th class="num" style="width:12%;">M 2025<br>Aantal</th>
+              <th class="num" style="width:14%;">M 2025<br>Percentage</th>
+              <th class="num" style="width:14%;">Voortgang<br>(in pp)</th>
+            </tr>
+          </thead>
+          <tbody id="quant-table-body"></tbody>
+        </table>
+        <p class="footnote" style="margin-top:6px;">pp = procentpunt. Culturele achtergrond volgens CBS-definitie.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 7: Comparison + Boxplot -->
+  <div class="page" id="page-7">
+    <div class="page-number-header">| 7 |</div>
+    <div class="page-content" style="display:flex; flex-direction:column;">
+      <h2 style="margin-bottom:2px;">Kwantitatief</h2>
+      <h3 style="margin-bottom:12px;">uw situatie in kengetallen</h3>
+      <div style="display:flex; gap:25px; flex:1;">
+        <!-- Left: comparison table -->
+        <div style="flex:1;">
+          <h4 style="color:var(--teal); margin-bottom:6px; font-size:13px;">Aandeel werknemers met een andere culturele achtergrond</h4>
+          <p style="font-size:10px; line-height:1.6; margin-bottom:8px;">
+            Vergelijking van uw percentages met het minimum, gemiddelde en maximum van alle deelnemende organisaties.
+          </p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Organisatielaag</th>
+                <th class="num">Uw %</th>
+                <th class="num">(Aantal)</th>
+                <th class="num">Min.</th>
+                <th class="num">Gem.</th>
+                <th class="num">Max.</th>
+              </tr>
+            </thead>
+            <tbody id="compare-table-body"></tbody>
+          </table>
+          <p class="footnote" style="margin-top:6px;">Bron: Monitor Talent naar de Top 2025.</p>
+        </div>
+        <!-- Right: boxplot -->
+        <div style="flex:1; display:flex; flex-direction:column;">
+          <h4 style="color:var(--teal); margin-bottom:6px; font-size:13px;">Visualisatie</h4>
+          <p style="font-size:10px; line-height:1.6; margin-bottom:8px;">
+            De boxplot toont de verdeling van het percentage werknemers met een andere culturele achtergrond in de top,
+            over alle deelnemende organisaties.
+          </p>
+          <canvas id="boxplot-canvas" style="flex:1;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 8: Bijlage Brick Charts (1/2) -->
+  <div class="page" id="page-8">
+    <div class="page-number-header">| 8 |</div>
+    <div class="page-content" style="display:flex; flex-direction:column;">
+      <h2 style="margin-bottom:2px;">Bijlage</h2>
+      <h3 style="margin-bottom:12px;">Samenstelling van het profiel van uw bedrijf</h3>
+      <div style="display:flex; gap:25px; flex:1;">
+        <!-- Left column -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:15px;">
+          <div>
+            <h4 style="margin-bottom:5px;">Leiderschap</h4>
+            <canvas id="brick-lead"></canvas>
+          </div>
+          <div>
+            <h4 style="margin-bottom:5px;">Strategie en management</h4>
+            <canvas id="brick-strat"></canvas>
+          </div>
+        </div>
+        <!-- Right column -->
+        <div style="flex:1;">
+          <h4 style="margin-bottom:5px;">HR Management</h4>
+          <canvas id="brick-hr"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 9: Bijlage Brick Charts (2/2) + Colofon -->
+  <div class="page" id="page-9">
+    <div class="page-number-header">| 9 |</div>
+    <div class="page-content" style="display:flex; flex-direction:column;">
+      <h2 style="margin-bottom:2px;">Bijlage</h2>
+      <h3 style="margin-bottom:12px;">Samenstelling van het profiel van uw bedrijf</h3>
+      <div style="display:flex; gap:25px; flex:1;">
+        <!-- Left column -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:15px;">
+          <div>
+            <h4 style="margin-bottom:5px;">Communicatie</h4>
+            <canvas id="brick-comm"></canvas>
+          </div>
+          <div>
+            <h4 style="margin-bottom:5px;">Kennis en vaardigheden</h4>
+            <canvas id="brick-know"></canvas>
+          </div>
+        </div>
+        <!-- Right column -->
+        <div style="flex:1; display:flex; flex-direction:column;">
+          <div style="margin-bottom:15px;">
+            <h4 style="margin-bottom:5px;">Klimaat</h4>
+            <canvas id="brick-clim"></canvas>
+          </div>
+          <div class="colofon-box" style="margin-top:auto;">
+            <h4>Colofon</h4>
+            <p>
+              <strong>Commissie Monitoring Talent naar de Top</strong><br>
+              Bezoekadres: Nassaulaan 25, 2514 JT Den Haag<br>
+              Postadres: Postbus 93002, 2509 AA Den Haag<br>
+              Telefoon: +31 (0)70 349 44 50<br>
+              E-mail: info@talentnaardetop.nl<br>
+              Website: www.talentnaardetop.nl
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /preview-container -->
+
+<script src="js/data.js"></script>
+<script src="js/radialChart.js"></script>
+<script src="js/brickChart.js"></script>
+<script src="js/boxplot.js"></script>
+<script src="js/print.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

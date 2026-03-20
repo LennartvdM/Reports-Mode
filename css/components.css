@@ -1,0 +1,161 @@
+/* Dark band sections */
+.dark-band {
+  background: var(--navy);
+  color: var(--white);
+  padding: 20px 25px;
+}
+
+.dark-band h4 {
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+
+.dark-band p {
+  color: rgba(255,255,255,0.85);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* Tables */
+.data-table {
+  width: 100%;
+  font-size: 10px;
+  border-collapse: collapse;
+}
+
+.data-table thead th {
+  font-weight: 700;
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 2px solid var(--navy);
+  color: var(--navy);
+  font-size: 10px;
+}
+
+.data-table thead th.num {
+  text-align: right;
+}
+
+.data-table tbody td {
+  padding: 5px 10px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 10px;
+}
+
+.data-table tbody td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table tbody td.label-col {
+  font-weight: 500;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: 2px solid var(--navy);
+}
+
+/* Voortgang indicators */
+.voortgang-pos {
+  color: #2a8c4a;
+  font-weight: 600;
+}
+
+.voortgang-neg {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+.voortgang-zero {
+  color: var(--text-grey);
+}
+
+/* Teal divider */
+.teal-divider {
+  height: 2px;
+  background: var(--teal);
+  margin: 10px 0;
+}
+
+/* Phase blocks on page 4 */
+.phase-row {
+  display: flex;
+  align-items: stretch;
+  min-height: 32mm;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.phase-number {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--teal);
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.phase-text {
+  flex: 1;
+  padding: 8px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.phase-text h4 {
+  margin-bottom: 2px;
+  font-size: 14px;
+}
+
+.phase-text .phase-desc {
+  font-size: 10px;
+  font-style: italic;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+
+.phase-text .phase-quote {
+  font-size: 9px;
+  color: var(--text-grey);
+}
+
+.phase-color {
+  width: 30px;
+  flex-shrink: 0;
+}
+
+/* Colofon box */
+.colofon-box {
+  border: 1px solid var(--navy);
+  padding: 12px 15px;
+  font-size: 9px;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.colofon-box h4 {
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+/* Small ambitie table */
+.ambitie-table {
+  width: 100%;
+  font-size: 10px;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.ambitie-table th, .ambitie-table td {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.ambitie-table th {
+  background: var(--bg-light);
+  font-weight: 600;
+  color: var(--navy);
+}
