@@ -32,6 +32,7 @@
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   flex-shrink: 0;
+  /* No padding/margin on the page itself */
 }
 
 .page-number-header {
@@ -42,15 +43,17 @@
   text-align: center;
   font-size: 12px;
   color: var(--text-grey);
+  z-index: 2;
 }
 
+/* Page content fills entire page — no default padding.
+   Each page handles its own internal spacing. */
 .page-content {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 15mm 20mm;
 }
 
 @media print {

@@ -1,6 +1,6 @@
 /**
- * Radial bar chart (spider/radar) Canvas renderer.
- * Six axes at 60° intervals, four concentric rings (scores 1-4).
+ * Hexagonal spider/radar chart Canvas renderer.
+ * Six axes at 60° intervals, four concentric hexagonal rings (scores 1-4).
  */
 
 const RADIAL_LABELS = [
@@ -13,16 +13,16 @@ const RADIAL_LABELS = [
 ];
 
 const BLUE_RING_COLORS = [
-  '#B5DFE8', // ring 1 (innermost)
-  '#7EC8D8', // ring 2
-  '#3A7CA5', // ring 3
-  '#1B2A4A'  // ring 4 (outermost)
+  '#D6EEF3', // ring 1 (innermost) — lightest
+  '#A8D8E4', // ring 2
+  '#6BB8CC', // ring 3
+  '#3A7CA5'  // ring 4 (outermost) — darkest blue
 ];
 
 const ORANGE_RING_COLORS = [
-  '#F5D6B8',
-  '#F0B88A',
-  '#E8924A',
+  '#FADED0',
+  '#F5BFA3',
+  '#EE9A6C',
   '#E8712A'
 ];
 
@@ -35,7 +35,7 @@ function drawRadialChart(canvas, scores, options = {}) {
   } = options;
 
   const dpr = window.devicePixelRatio || 1;
-  const padding = showLabels ? 60 : 20;
+  const padding = showLabels ? 65 : 20;
   const totalSize = size + padding * 2;
 
   canvas.width = totalSize * dpr;
@@ -57,95 +57,105 @@ function drawRadialChart(canvas, scores, options = {}) {
   // Helper: angle for axis i
   const axisAngle = (i) => startAngle + (2 * Math.PI / numAxes) * i;
 
-  // Draw concentric ring backgrounds
+  // Helper: draw hexagon at a given radius
+  function hexPath(r) {
+    ctx.beginPath();
+    for (let i = 0; i < numAxes; i++) {
+      const angle = axisAngle(i);
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+
+  // Draw concentric hexagonal ring fills (ring 4 = outermost drawn first)
   for (let ring = 4; ring >= 1; ring--) {
     const r = (ring / 4) * maxR;
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(240,243,245,0.3)';
+    hexPath(r);
+    ctx.fillStyle = ringColors[ring - 1];
+    ctx.globalAlpha = 0.25;
     ctx.fill();
-    ctx.strokeStyle = '#ddd';
-    ctx.lineWidth = 0.5;
+    ctx.globalAlpha = 1;
+  }
+
+  // Draw hexagonal grid lines
+  for (let ring = 1; ring <= 4; ring++) {
+    const r = (ring / 4) * maxR;
+    hexPath(r);
+    ctx.strokeStyle = '#c0c0c0';
+    ctx.lineWidth = 0.7;
     ctx.stroke();
   }
 
-  // Draw axis lines
+  // Draw axis (spoke) lines
   for (let i = 0; i < numAxes; i++) {
     const angle = axisAngle(i);
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.lineTo(cx + Math.cos(angle) * maxR, cy + Math.sin(angle) * maxR);
-    ctx.strokeStyle = '#ccc';
-    ctx.lineWidth = 0.5;
+    ctx.strokeStyle = '#c0c0c0';
+    ctx.lineWidth = 0.7;
     ctx.stroke();
   }
 
-  // Draw filled area with colored segments
-  // For each pair of adjacent axes, fill the area from center to score level
+  // Draw tick dots on each axis at each ring level
   for (let i = 0; i < numAxes; i++) {
-    const nextI = (i + 1) % numAxes;
-    const score1 = Math.min(Math.max(scores[i] || 0, 0), 4);
-    const score2 = Math.min(Math.max(scores[nextI] || 0, 0), 4);
-    const angle1 = axisAngle(i);
-    const angle2 = axisAngle(nextI);
-
-    // Draw ring by ring for this segment
-    const maxScore = Math.ceil(Math.max(score1, score2));
-    for (let ring = 1; ring <= maxScore; ring++) {
-      const f1 = Math.min(score1, ring) / 4;
-      const f2 = Math.min(score2, ring) / 4;
-      const prevF1 = Math.min(score1, ring - 1) / 4;
-      const prevF2 = Math.min(score2, ring - 1) / 4;
-
-      if (f1 <= prevF1 && f2 <= prevF2) continue;
-
+    const angle = axisAngle(i);
+    for (let ring = 1; ring <= 4; ring++) {
+      const r = (ring / 4) * maxR;
       ctx.beginPath();
-      ctx.moveTo(cx + Math.cos(angle1) * prevF1 * maxR, cy + Math.sin(angle1) * prevF1 * maxR);
-      ctx.lineTo(cx + Math.cos(angle1) * f1 * maxR, cy + Math.sin(angle1) * f1 * maxR);
-      ctx.lineTo(cx + Math.cos(angle2) * f2 * maxR, cy + Math.sin(angle2) * f2 * maxR);
-      ctx.lineTo(cx + Math.cos(angle2) * prevF2 * maxR, cy + Math.sin(angle2) * prevF2 * maxR);
-      ctx.closePath();
-      ctx.fillStyle = ringColors[ring - 1];
-      ctx.globalAlpha = 0.8;
+      ctx.arc(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#aaa';
       ctx.fill();
-      ctx.globalAlpha = 1;
     }
   }
 
-  // Draw score outline
+  // Draw filled score shape
+  const fillColor = palette === 'orange' ? 'rgba(232,113,42,0.35)' : 'rgba(43,76,126,0.35)';
+  const strokeColor = palette === 'orange' ? '#c0551a' : '#1B2A4A';
+
   ctx.beginPath();
   for (let i = 0; i < numAxes; i++) {
     const angle = axisAngle(i);
-    const r = (Math.min(scores[i] || 0, 4) / 4) * maxR;
+    const score = Math.min(Math.max(scores[i] || 0, 0), 4);
+    const r = (score / 4) * maxR;
     const x = cx + Math.cos(angle) * r;
     const y = cy + Math.sin(angle) * r;
     if (i === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   }
   ctx.closePath();
-  ctx.strokeStyle = palette === 'orange' ? '#c0551a' : '#1B2A4A';
-  ctx.lineWidth = 1.5;
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = 2;
   ctx.stroke();
 
   // Draw score dots
   for (let i = 0; i < numAxes; i++) {
     const angle = axisAngle(i);
-    const r = (Math.min(scores[i] || 0, 4) / 4) * maxR;
+    const score = Math.min(Math.max(scores[i] || 0, 0), 4);
+    const r = (score / 4) * maxR;
     ctx.beginPath();
-    ctx.arc(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, 3, 0, Math.PI * 2);
+    ctx.arc(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, 4, 0, Math.PI * 2);
     ctx.fillStyle = palette === 'orange' ? '#E8712A' : '#1B2A4A';
     ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1;
+    ctx.stroke();
   }
 
   // Draw labels
   if (showLabels) {
     ctx.fillStyle = '#333';
-    ctx.font = `${labelFontSize}px Inter, sans-serif`;
+    ctx.font = `600 ${labelFontSize}px Inter, sans-serif`;
     ctx.textBaseline = 'middle';
 
     for (let i = 0; i < numAxes; i++) {
       const angle = axisAngle(i);
-      const labelR = maxR + 18;
+      const labelR = maxR + 20;
       const x = cx + Math.cos(angle) * labelR;
       const y = cy + Math.sin(angle) * labelR;
 
@@ -162,13 +172,13 @@ function drawRadialChart(canvas, scores, options = {}) {
     }
   }
 
-  // Draw ring number labels (1-4) on the top axis
+  // Draw ring number labels (1-4) along the top-left spoke
   ctx.fillStyle = '#999';
   ctx.font = '9px Inter, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'bottom';
   for (let ring = 1; ring <= 4; ring++) {
     const r = (ring / 4) * maxR;
-    ctx.fillText(ring.toString(), cx, cy - r - 3);
+    ctx.fillText(ring.toString(), cx, cy - r - 4);
   }
 }

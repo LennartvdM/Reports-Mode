@@ -38,61 +38,65 @@
 <!-- Report Pages -->
 <div class="preview-container hidden" id="report-pages">
 
-  <!-- PAGE 1: Cover -->
+  <!-- ============================================================ -->
+  <!-- PAGE 1: Cover                                                 -->
+  <!-- ============================================================ -->
   <div class="page" id="page-1">
-    <div class="page-content" style="display:flex; flex-direction:column; justify-content:space-between; padding:20mm 25mm;">
-      <!-- Top section -->
-      <div>
+    <div class="page-content">
+      <!-- Top-left text block -->
+      <div style="position:absolute; top:20mm; left:25mm;">
         <div style="color:var(--text-grey); font-size:14px; margin-bottom:2px;">Cultureel Talent naar de Top</div>
-        <div style="color:var(--text-grey); font-size:14px; margin-bottom:12px;">Factsheet 2025</div>
+        <div style="color:var(--text-grey); font-size:14px; margin-bottom:14px;">Factsheet 2025</div>
         <div id="cover-org-name" style="color:var(--navy); font-size:20px; font-weight:700;"></div>
       </div>
-      <!-- Middle: large title -->
-      <div style="display:flex; justify-content:flex-end; align-items:center; flex:1;">
-        <div style="text-align:right;">
-          <div style="font-size:64px; font-weight:700; color:var(--navy); line-height:1.05;">Culturele</div>
-          <div style="font-size:64px; font-weight:700; color:var(--teal); line-height:1.05;">Diversiteit</div>
-        </div>
+
+      <!-- Large title — right half, vertically centered -->
+      <div style="position:absolute; top:50%; right:25mm; transform:translateY(-50%); text-align:right;">
+        <div style="font-size:72px; font-weight:700; color:var(--navy); line-height:1.05;">Culturele</div>
+        <div style="font-size:72px; font-weight:700; color:var(--teal); line-height:1.05;">Diversiteit</div>
       </div>
-      <!-- Bottom section -->
-      <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-        <!-- Concentric arcs -->
-        <svg width="200" height="200" viewBox="0 0 200 200" style="flex-shrink:0;">
-          <g transform="translate(0,200)">
-            <path d="M0,0 A180,180 0 0,1 180,-180 L180,-155 A155,155 0 0,0 0,-25 Z" fill="#1B2A4A"/>
-            <path d="M0,-30 A150,150 0 0,1 150,-180 L150,-155 A125,125 0 0,0 0,-55 Z" fill="#2B4C7E"/>
-            <path d="M0,-60 A120,120 0 0,1 120,-180 L120,-155 A95,95 0 0,0 0,-85 Z" fill="#3A7CA5"/>
-            <path d="M0,-90 A90,90 0 0,1 90,-180 L90,-155 A65,65 0 0,0 0,-115 Z" fill="#5BA4B5"/>
-            <path d="M0,-120 A60,60 0 0,1 60,-180 L60,-155 A35,35 0 0,0 0,-145 Z" fill="#7EC8D8"/>
-            <path d="M0,-150 A30,30 0 0,1 30,-180 L30,-160 A10,10 0 0,0 0,-170 Z" fill="#D4C9A8"/>
-          </g>
-        </svg>
-        <!-- Logo block -->
-        <div style="text-align:right; font-size:10px; color:var(--text-grey); line-height:1.6;">
-          <div style="font-weight:700; color:var(--navy); font-size:12px;">Commissie Monitoring</div>
-          <div style="font-weight:700; color:var(--navy); font-size:12px;">Talent naar de Top</div>
-        </div>
+
+      <!-- Concentric arcs — bottom-left corner, flush -->
+      <svg style="position:absolute; bottom:0; left:0;" width="340" height="280" viewBox="0 0 340 280">
+        <g transform="translate(0,280)">
+          <!-- outermost = navy -->
+          <path d="M0,0 A270,270 0 0,1 270,-270 L270,-245 A245,245 0 0,0 0,-25 Z" fill="#1B2A4A"/>
+          <path d="M0,-32 A238,238 0 0,1 238,-270 L238,-245 A213,213 0 0,0 0,-57 Z" fill="#2B4C7E"/>
+          <path d="M0,-64 A206,206 0 0,1 206,-270 L206,-245 A181,181 0 0,0 0,-89 Z" fill="#3A7CA5"/>
+          <path d="M0,-96 A174,174 0 0,1 174,-270 L174,-245 A149,149 0 0,0 0,-121 Z" fill="#5BA4B5"/>
+          <path d="M0,-128 A142,142 0 0,1 142,-270 L142,-245 A117,117 0 0,0 0,-153 Z" fill="#7EC8D8"/>
+          <!-- innermost = cream -->
+          <path d="M0,-160 A110,110 0 0,1 110,-270 L110,-245 A85,85 0 0,0 0,-185 Z" fill="#D4C9A8"/>
+        </g>
+      </svg>
+
+      <!-- Logo block — bottom-right, in bordered box -->
+      <div style="position:absolute; bottom:20mm; right:25mm; border:1px solid var(--navy); padding:10px 16px; text-align:right; font-size:10px; color:var(--text-grey); line-height:1.6;">
+        <div style="font-weight:700; color:var(--navy); font-size:12px;">Commissie Monitoring</div>
+        <div style="font-weight:700; color:var(--navy); font-size:12px;">Talent naar de Top</div>
       </div>
     </div>
   </div>
 
-  <!-- PAGE 2: Inleiding -->
+  <!-- ============================================================ -->
+  <!-- PAGE 2: Inleiding                                             -->
+  <!-- ============================================================ -->
   <div class="page" id="page-2">
     <div class="page-number-header">| 2 |</div>
-    <div class="page-content" style="display:flex; flex-direction:column; padding:15mm 20mm 0 20mm;">
-      <!-- Top section -->
-      <div style="flex:1; padding-bottom:15px;">
-        <h2 style="margin-bottom:8px;">Inleiding</h2>
-        <p style="font-size:11px; line-height:1.7; max-width:85%; color:var(--text-dark);">
+    <div class="page-content" style="display:flex; flex-direction:column;">
+      <!-- Top section — white, ~60% -->
+      <div style="flex:1; padding:18mm 25mm 10px 25mm;">
+        <h2 style="margin-bottom:10px;">Inleiding</h2>
+        <p style="font-size:11px; line-height:1.8; max-width:85%; color:var(--text-dark);">
           De Commissie Monitoring Talent naar de Top volgt jaarlijks de voortgang van culturele diversiteit in de top van organisaties die deelnemen aan het Charter Talent naar de Top.
           Deze factsheet geeft uw organisatie inzicht in de huidige stand van zaken rondom culturele diversiteit, zowel kwalitatief (beleid en strategie) als kwantitatief (kengetallen).
           Het kwalitatieve deel meet uw organisatie op zes dimensies van diversiteitsbeleid, elk beoordeeld op een schaal van 1 (oriëntatiefase) tot 4 (beheersingsfase).
           Het kwantitatieve deel toont het aandeel werknemers met een andere culturele achtergrond in verschillende lagen van uw organisatie, vergeleken met het voorgaande jaar en met de andere deelnemende organisaties.
         </p>
       </div>
-      <!-- Dark bottom section -->
-      <div class="dark-band" style="margin:0 -20mm; padding:20px 25mm; flex:0 0 auto;">
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px 30px;">
+      <!-- Dark bottom band — flush left/right/bottom -->
+      <div class="dark-band" style="padding:22px 25mm 22px 25mm; flex:0 0 auto;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px 35px;">
           <div>
             <h4>Doelstellingen</h4>
             <p>Het formuleren van concrete doelstellingen en streefcijfers voor culturele diversiteit in alle lagen van de organisatie.</p>
@@ -122,15 +126,17 @@
     </div>
   </div>
 
-  <!-- PAGE 3: Kwalitatief: Uw Profiel -->
+  <!-- ============================================================ -->
+  <!-- PAGE 3: Kwalitatief: Uw Profiel                               -->
+  <!-- ============================================================ -->
   <div class="page" id="page-3">
     <div class="page-number-header">| 3 |</div>
     <div class="page-content" style="display:flex; flex-direction:column;">
-      <!-- Top section -->
-      <div style="display:flex; flex:1; gap:20px;">
-        <div style="flex:1;">
+      <!-- Top section ~55% -->
+      <div style="flex:1; display:flex; gap:20px; padding:18mm 25mm 0 25mm;">
+        <div style="flex:1; padding-top:2mm;">
           <h2 style="margin-bottom:2px;">Kwalitatief:</h2>
-          <h3 style="margin-bottom:10px;">uw strategie en beleid</h3>
+          <h3 style="margin-bottom:12px;">uw strategie en beleid</h3>
           <div style="color:var(--teal); font-size:16px; font-weight:700; margin-bottom:8px;">Uw profiel</div>
           <p style="font-size:11px; line-height:1.7;">
             De onderstaande radardiagram toont het profiel van uw organisatie op de zes dimensies van cultureel diversiteitsbeleid.
@@ -142,56 +148,58 @@
           <canvas id="radial-page3"></canvas>
         </div>
       </div>
-      <!-- Divider -->
-      <div class="teal-divider"></div>
-      <!-- Dark bottom section -->
-      <div class="dark-band" style="margin:0 -20mm -15mm -20mm; padding:15px 25mm 15mm 25mm; flex:0 0 auto;">
-        <h4 style="color:var(--white); font-size:18px; margin-bottom:12px;">De zes dimensies</h4>
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px 25px;">
+      <!-- Teal divider — ~80% width, some left margin -->
+      <div style="margin:6px 25mm 6px calc(25mm + 5%); height:2px; background:var(--teal);"></div>
+      <!-- Bottom section ~35% — light background, not dark -->
+      <div style="flex:0 0 auto; padding:12px 25mm 15mm 25mm; background:var(--bg-light);">
+        <h4 style="color:var(--navy); font-size:18px; margin-bottom:10px;">De zes dimensies</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px 25px;">
           <div>
-            <h4>Leiderschap</h4>
-            <p>De mate waarin leiders zich actief inzetten voor culturele diversiteit en inclusie als strategische prioriteit.</p>
+            <h4 style="color:var(--navy); font-size:12px; margin-bottom:3px;">Leiderschap</h4>
+            <p style="font-size:10px; line-height:1.5; color:var(--text-dark);">De mate waarin leiders zich actief inzetten voor culturele diversiteit en inclusie als strategische prioriteit.</p>
           </div>
           <div>
-            <h4>Strategie en management</h4>
-            <p>De integratie van diversiteitsdoelen in bedrijfsstrategie, planning en managementprocessen.</p>
+            <h4 style="color:var(--navy); font-size:12px; margin-bottom:3px;">Strategie en management</h4>
+            <p style="font-size:10px; line-height:1.5; color:var(--text-dark);">De integratie van diversiteitsdoelen in bedrijfsstrategie, planning en managementprocessen.</p>
           </div>
           <div>
-            <h4>HR Management</h4>
-            <p>Inclusieve HR-praktijken in werving, selectie, ontwikkeling, beoordeling en doorstroombeleid.</p>
+            <h4 style="color:var(--navy); font-size:12px; margin-bottom:3px;">HR Management</h4>
+            <p style="font-size:10px; line-height:1.5; color:var(--text-dark);">Inclusieve HR-praktijken in werving, selectie, ontwikkeling, beoordeling en doorstroombeleid.</p>
           </div>
           <div>
-            <h4>Communicatie</h4>
-            <p>Interne en externe communicatie over diversiteitsambities, voortgang en succesverhalen.</p>
+            <h4 style="color:var(--navy); font-size:12px; margin-bottom:3px;">Communicatie</h4>
+            <p style="font-size:10px; line-height:1.5; color:var(--text-dark);">Interne en externe communicatie over diversiteitsambities, voortgang en succesverhalen.</p>
           </div>
           <div>
-            <h4>Kennis en vaardigheden</h4>
-            <p>Training en ontwikkeling gericht op cultureel bewustzijn en interculturele competenties.</p>
+            <h4 style="color:var(--navy); font-size:12px; margin-bottom:3px;">Kennis en vaardigheden</h4>
+            <p style="font-size:10px; line-height:1.5; color:var(--text-dark);">Training en ontwikkeling gericht op cultureel bewustzijn en interculturele competenties.</p>
           </div>
           <div>
-            <h4>Klimaat</h4>
-            <p>Een inclusief werkklimaat waar verschillen worden gewaardeerd en iedereen zich thuis voelt.</p>
+            <h4 style="color:var(--navy); font-size:12px; margin-bottom:3px;">Klimaat</h4>
+            <p style="font-size:10px; line-height:1.5; color:var(--text-dark);">Een inclusief werkklimaat waar verschillen worden gewaardeerd en iedereen zich thuis voelt.</p>
           </div>
         </div>
-        <div style="margin-top:10px; font-size:9px; color:var(--yellow);">* Culturele achtergrond is gedefinieerd volgens de CBS-definitie.</div>
+        <div style="margin-top:8px; font-size:9px; color:var(--orange);">* Culturele achtergrond is gedefinieerd volgens de CBS-definitie.</div>
       </div>
     </div>
   </div>
 
-  <!-- PAGE 4: Vier Fases -->
+  <!-- ============================================================ -->
+  <!-- PAGE 4: Vier Fases                                            -->
+  <!-- ============================================================ -->
   <div class="page" id="page-4">
     <div class="page-number-header">| 4 |</div>
-    <div class="page-content" style="display:flex; flex-direction:column;">
+    <div class="page-content" style="display:flex; flex-direction:column; padding:18mm 25mm 15mm 25mm;">
       <h2 style="margin-bottom:2px;">Kwalitatief:</h2>
       <h3 style="margin-bottom:15px;">uw strategie en beleid</h3>
       <div style="display:flex; gap:25px; flex:1;">
-        <!-- Decorative arcs -->
-        <div style="flex:0 0 120px;">
-          <svg width="120" height="160" viewBox="0 0 120 160">
-            <g transform="translate(0,160)">
-              <path d="M0,0 A100,100 0 0,1 100,-100 L100,-80 A80,80 0 0,0 0,-20 Z" fill="#2B4C7E"/>
-              <path d="M0,-25 A75,75 0 0,1 75,-100 L75,-80 A55,55 0 0,0 0,-50 Z" fill="#3A7CA5"/>
-              <path d="M0,-55 A45,45 0 0,1 45,-100 L45,-80 A25,25 0 0,0 0,-80 Z" fill="#5BA4B5"/>
+        <!-- Decorative arcs — partial, left side -->
+        <div style="flex:0 0 130px; display:flex; align-items:flex-end;">
+          <svg width="130" height="180" viewBox="0 0 130 180">
+            <g transform="translate(0,180)">
+              <path d="M0,0 A110,110 0 0,1 110,-110 L110,-88 A88,88 0 0,0 0,-22 Z" fill="#2B4C7E"/>
+              <path d="M0,-28 A82,82 0 0,1 82,-110 L82,-88 A60,60 0 0,0 0,-50 Z" fill="#3A7CA5"/>
+              <path d="M0,-56 A54,54 0 0,1 54,-110 L54,-88 A32,32 0 0,0 0,-78 Z" fill="#5BA4B5"/>
             </g>
           </svg>
         </div>
@@ -238,23 +246,25 @@
     </div>
   </div>
 
-  <!-- PAGE 5: Three Radial Charts -->
+  <!-- ============================================================ -->
+  <!-- PAGE 5: Three Radial Charts                                   -->
+  <!-- ============================================================ -->
   <div class="page" id="page-5">
     <div class="page-number-header">| 5 |</div>
-    <div class="page-content" style="display:flex; flex-direction:column;">
+    <div class="page-content" style="display:flex; flex-direction:column; padding:18mm 25mm 15mm 25mm;">
       <h2 style="margin-bottom:2px;">Kwalitatief:</h2>
-      <h3 style="margin-bottom:10px;">uw strategie en beleid</h3>
+      <h3 style="margin-bottom:8px;">uw strategie en beleid</h3>
       <div style="display:flex; flex:1; gap:10px;">
-        <!-- Left: org chart (large) -->
-        <div style="flex:0 0 50%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-          <div style="color:var(--teal); font-size:14px; font-weight:700; margin-bottom:5px;">Uw profiel</div>
+        <!-- Left: org chart (large, ~55%) -->
+        <div style="flex:0 0 55%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div style="color:var(--teal); font-size:14px; font-weight:700; margin-bottom:4px;">Uw profiel</div>
           <canvas id="radial-page5-org"></canvas>
         </div>
-        <!-- Right: average + benchmark -->
-        <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+        <!-- Right: average + benchmark stacked, ~45% -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
           <!-- Average -->
           <div style="display:flex; align-items:center; gap:10px; flex:1;">
-            <div style="flex:1;">
+            <div style="flex:1; min-width:0;">
               <div style="color:var(--teal); font-size:13px; font-weight:700; margin-bottom:3px;">Het gemiddelde</div>
               <p style="font-size:9px; line-height:1.5; color:var(--text-dark);">
                 Het gemiddelde profiel van alle deelnemende organisaties aan de monitor.
@@ -264,7 +274,7 @@
           </div>
           <!-- Benchmark -->
           <div style="display:flex; align-items:center; gap:10px; flex:1;">
-            <div style="flex:1;">
+            <div style="flex:1; min-width:0;">
               <div style="color:var(--orange); font-size:13px; font-weight:700; margin-bottom:3px;">De benchmark</div>
               <p style="font-size:9px; line-height:1.5; color:var(--text-dark);">
                 De hoogste scores per dimensie over alle deelnemende organisaties — het best haalbare profiel.
@@ -277,10 +287,12 @@
     </div>
   </div>
 
-  <!-- PAGE 6: Kwantitatief Tables -->
+  <!-- ============================================================ -->
+  <!-- PAGE 6: Kwantitatief Tables                                   -->
+  <!-- ============================================================ -->
   <div class="page" id="page-6">
     <div class="page-number-header">| 6 |</div>
-    <div class="page-content" style="display:flex; flex-direction:column;">
+    <div class="page-content" style="display:flex; flex-direction:column; padding:18mm 25mm 15mm 25mm;">
       <h2 style="margin-bottom:2px;">Kwantitatief</h2>
       <h3 style="margin-bottom:15px;">uw situatie in kengetallen</h3>
 
@@ -333,10 +345,12 @@
     </div>
   </div>
 
-  <!-- PAGE 7: Comparison + Boxplot -->
+  <!-- ============================================================ -->
+  <!-- PAGE 7: Comparison + Boxplot                                  -->
+  <!-- ============================================================ -->
   <div class="page" id="page-7">
     <div class="page-number-header">| 7 |</div>
-    <div class="page-content" style="display:flex; flex-direction:column;">
+    <div class="page-content" style="display:flex; flex-direction:column; padding:18mm 25mm 15mm 25mm;">
       <h2 style="margin-bottom:2px;">Kwantitatief</h2>
       <h3 style="margin-bottom:12px;">uw situatie in kengetallen</h3>
       <div style="display:flex; gap:25px; flex:1;">
@@ -374,14 +388,16 @@
     </div>
   </div>
 
-  <!-- PAGE 8: Bijlage Brick Charts (1/2) -->
+  <!-- ============================================================ -->
+  <!-- PAGE 8: Bijlage Brick Charts (1/2)                           -->
+  <!-- ============================================================ -->
   <div class="page" id="page-8">
     <div class="page-number-header">| 8 |</div>
-    <div class="page-content" style="display:flex; flex-direction:column;">
+    <div class="page-content" style="display:flex; flex-direction:column; padding:18mm 25mm 15mm 25mm;">
       <h2 style="margin-bottom:2px;">Bijlage</h2>
       <h3 style="margin-bottom:12px;">Samenstelling van het profiel van uw bedrijf</h3>
       <div style="display:flex; gap:25px; flex:1;">
-        <!-- Left column -->
+        <!-- Left column: Leiderschap + Strategie -->
         <div style="flex:1; display:flex; flex-direction:column; gap:15px;">
           <div>
             <h4 style="margin-bottom:5px;">Leiderschap</h4>
@@ -392,7 +408,7 @@
             <canvas id="brick-strat"></canvas>
           </div>
         </div>
-        <!-- Right column -->
+        <!-- Right column: HR Management -->
         <div style="flex:1;">
           <h4 style="margin-bottom:5px;">HR Management</h4>
           <canvas id="brick-hr"></canvas>
@@ -401,14 +417,16 @@
     </div>
   </div>
 
-  <!-- PAGE 9: Bijlage Brick Charts (2/2) + Colofon -->
+  <!-- ============================================================ -->
+  <!-- PAGE 9: Bijlage Brick Charts (2/2) + Colofon                 -->
+  <!-- ============================================================ -->
   <div class="page" id="page-9">
     <div class="page-number-header">| 9 |</div>
-    <div class="page-content" style="display:flex; flex-direction:column;">
+    <div class="page-content" style="display:flex; flex-direction:column; padding:18mm 25mm 15mm 25mm;">
       <h2 style="margin-bottom:2px;">Bijlage</h2>
       <h3 style="margin-bottom:12px;">Samenstelling van het profiel van uw bedrijf</h3>
       <div style="display:flex; gap:25px; flex:1;">
-        <!-- Left column -->
+        <!-- Left column: Communicatie + Kennis -->
         <div style="flex:1; display:flex; flex-direction:column; gap:15px;">
           <div>
             <h4 style="margin-bottom:5px;">Communicatie</h4>
@@ -419,7 +437,7 @@
             <canvas id="brick-know"></canvas>
           </div>
         </div>
-        <!-- Right column -->
+        <!-- Right column: Klimaat + Colofon -->
         <div style="flex:1; display:flex; flex-direction:column;">
           <div style="margin-bottom:15px;">
             <h4 style="margin-bottom:5px;">Klimaat</h4>
