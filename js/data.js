@@ -42,11 +42,73 @@ function getDimensionAvg(row, dim) {
   return scores.reduce((a, b) => a + b, 0) / scores.length;
 }
 
+const ITEM_LABELS = {
+  lead_: [
+    'Visie op diversiteit',
+    'Betrokkenheid top',
+    'Voorbeeldgedrag',
+    'Aansturing beleid',
+    'Verantwoording resultaten'
+  ],
+  strat_: [
+    'Diversiteit in strategie',
+    'Doelstellingen geformuleerd',
+    'Actieplannen opgesteld',
+    'Budget gealloceerd',
+    'Monitoring voortgang',
+    'Bijsturing bij afwijking',
+    'Externe benchmarking',
+    'Rapportage aan bestuur'
+  ],
+  hr_: [
+    'Inclusieve werving',
+    'Diverse selectiecommissies',
+    'Objectieve selectiecriteria',
+    'Onboarding programma',
+    'Mentoring & sponsoring',
+    'Talentontwikkeling',
+    'Doorstroombeleid',
+    'Beoordelingssystematiek',
+    'Beloning en erkenning',
+    'Flexibel werken',
+    'Verlof- en feestdagenbeleid',
+    'Exitgesprekken diversiteit',
+    'Data-analyse HR-processen',
+    'Diversiteit in HR-team'
+  ],
+  comm_: [
+    'Interne communicatie',
+    'Externe communicatie',
+    'Beeldvorming en taalgebruik',
+    'Rolmodellen zichtbaar',
+    'Communicatie naar stakeholders'
+  ],
+  know_: [
+    'Bewustwordingstraining',
+    'Inclusief leiderschap',
+    'Interculturele competenties',
+    'Onbewuste vooroordelen',
+    'Kennisdeling best practices',
+    'Externe expertise',
+    'Evaluatie trainingen',
+    'Continu leren'
+  ],
+  clim_: [
+    'Psychologische veiligheid',
+    'Inclusieve teamcultuur',
+    'Medewerkersonderzoek',
+    'Klachtenprocedure',
+    'Netwerken en ERGs',
+    'Waardering verschillen'
+  ]
+};
+
 function getDimensionItems(row, dim) {
   const items = [];
+  const labels = ITEM_LABELS[dim.prefix] || [];
   for (let i = 1; i <= dim.count; i++) {
     items.push({
-      label: `${dim.label} ${i}`,
+      label: labels[i - 1] || `${dim.label} ${i}`,
       score: parseNumber(row[dim.prefix + i]) || 1
     });
   }
