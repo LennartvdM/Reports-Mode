@@ -1,0 +1,15 @@
+{
+  "name": "monitor-cultureel-talent",
+  "version": "1.0.0",
+  "description": "Automated factsheet pipeline for Cultureel Talent naar de Top monitoring programme",
+  "type": "module",
+  "main": "pipeline.js",
+  "scripts": {
+    "pipeline": "node pipeline.js --survey data/survey-2026.csv --reference data/monitor-2025.csv --output ./output",
+    "test": "node --test test-pipeline.js"
+  },
+  "dependencies": {
+    "papaparse": "^5.4.1",
+    "xlsx": "^0.18.5"
+  }
+}
