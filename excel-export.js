@@ -1,13 +1,15 @@
 /**
  * Excel export module — generates the colleague's familiar Excel layout.
  *
+ * Returns a workbook object (caller writes it via XLSX.writeFile).
+ *
  * Output structure:
  * - Row 1: full question-text headers (2025 format)
  * - Rows 2–N: one row per org, Likert converted to 1–4, Totaalscore columns
  * - Below data: cross-calculation zones
  */
 
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 import {
   DIMENSIONS,
   QUANT_FIELDS,
@@ -24,6 +26,15 @@ function mean(arr) {
   const valid = arr.filter(v => v !== null && v !== undefined);
   if (valid.length === 0) return null;
   return valid.reduce((a, b) => a + b, 0) / valid.length;
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function parseNumber(val) {
+  if (val === undefined || val === null || val === '') return null;
+  const s = String(val).replace(',', '.').replace('%', '').trim();
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
 }
 
 /**
@@ -56,43 +67,43 @@ function buildHeaders() {
 }
 
 /**
- * Build a data row for one organisation.
+ * Build a data row for one organisation from raw survey row + report data.
  */
-function buildOrgRow(org) {
-  const row = [org.orgName];
+function buildOrgRow(surveyRow, report) {
+  const row = [report.meta.orgName];
 
   // Streefcijfer
-  row.push(org.streefcijfer !== null ? 'Ja' : 'Nee');
-  row.push(org.streefcijfer);
+  row.push(report.streefComparison.orgStreefcijfer !== null ? 'Ja' : 'Nee');
+  row.push(report.streefComparison.orgStreefcijfer);
 
-  // Quantitative columns
+  // Quantitative columns: werknemers, top, subtop (no "has" column)
   for (const catKey of ['werknemers', 'top', 'subtop']) {
-    const q = org.quant[catKey];
+    const q = report.currentQuant[catKey];
     row.push(q ? q.total : null);
     row.push(q ? q.be : null);
   }
 
   // RvB (with has column)
-  const rvb = org.quant.rvb;
+  const rvb = report.currentQuant.rvb;
   row.push(rvb && rvb.total !== null ? 'Ja' : 'Nee');
   row.push(rvb ? rvb.total : null);
   row.push(rvb ? rvb.be : null);
 
-  // RvC - extract from rvc_rvt combined or separate if available
-  // We store rvc separately in the original data, so check quant
-  const hasRvc = org.quant.rvc_rvt !== null; // Simplified: if rvc_rvt exists, assume rvc
-  row.push(hasRvc ? 'Ja' : 'Nee');
-  row.push(org.quant.rvc_rvt ? org.quant.rvc_rvt.total : null);
-  row.push(org.quant.rvc_rvt ? org.quant.rvc_rvt.be : null);
+  // RvC (with has column) — we read raw survey data for separate rvc/rvt
+  const hasRvc = (surveyRow.heeft_rvc || '').toLowerCase();
+  row.push(hasRvc === 'ja' || hasRvc === 'yes' || hasRvc === '1' ? 'Ja' : 'Nee');
+  row.push(parseNumber(surveyRow.aantal_rvc));
+  row.push(parseNumber(surveyRow.rvc_buiten_europa));
 
-  // RvT placeholder (combined into rvc_rvt in processing)
-  row.push(null); // heeft_rvt
-  row.push(null); // aantal_rvt
-  row.push(null); // rvt_buiten_europa
+  // RvT (with has column)
+  const hasRvt = (surveyRow.heeft_rvt || '').toLowerCase();
+  row.push(hasRvt === 'ja' || hasRvt === 'yes' || hasRvt === '1' ? 'Ja' : 'Nee');
+  row.push(parseNumber(surveyRow.aantal_rvt));
+  row.push(parseNumber(surveyRow.rvt_buiten_europa));
 
-  // Likert items per dimension (already in 1–4 scale)
+  // Likert items per dimension (already in 1–4 scale in report)
   for (const dim of DIMENSIONS) {
-    const dimData = org.likert[dim.key];
+    const dimData = report.currentLikert[dim.key];
     const scores = [];
     for (const item of dimData.items) {
       row.push(item.score);
@@ -108,7 +119,7 @@ function buildOrgRow(org) {
 /**
  * Build the cross-calculation zones below the data rows.
  */
-function buildSummaryZones(orgs2026, aggregates) {
+function buildSummaryZones(reports) {
   const zones = [];
 
   // Blank separator row
@@ -116,44 +127,61 @@ function buildSummaryZones(orgs2026, aggregates) {
 
   // Streefcijfer summary
   zones.push(['Streefcijfer samenvatting']);
-  const orgsWithStreef = orgs2026.filter(o => o.streefcijfer !== null);
+  const orgsWithStreef = reports.filter(r => r.streefComparison.orgStreefcijfer !== null);
   zones.push(['Aantal organisaties met streefcijfer', orgsWithStreef.length]);
-  zones.push(['Gemiddeld streefcijfer', aggregates.avgStreefcijfer]);
+  zones.push(['Gemiddeld streefcijfer', reports[0]?.streefComparison.avgStreefcijfer ?? null]);
 
   zones.push([]);
 
-  // Cijfers Top: gem/min/max
+  // Cijfers Top: gem/min/max — from first report's benchmarkTable (same for all)
   zones.push(['Cijfers Top - Buiten-Europa']);
   zones.push(['', 'Gemiddeld', 'Minimum', 'Maximum']);
-  for (const rowDef of QUANT_ROWS) {
-    const agg = aggregates.quantAgg[rowDef.key];
-    zones.push([rowDef.label, agg.gemiddeld, agg.min, agg.max]);
+  if (reports.length > 0) {
+    for (const row of reports[0].benchmarkTable) {
+      zones.push([row.label, row.gemiddeld, row.min, row.max]);
+    }
   }
 
   zones.push([]);
 
-  // Zes dimensies grid
+  // Zes dimensies grid — from first report's dimAggregates (same for all)
   zones.push(['Zes dimensies - Gemiddeld en Benchmark']);
   zones.push(['Dimensie', 'Gemiddeld', 'Benchmark (max)']);
-  for (const dim of DIMENSIONS) {
-    const agg = aggregates.dimAggregates[dim.key];
-    zones.push([dim.label, agg.average, agg.benchmark]);
+  if (reports.length > 0) {
+    for (const dim of DIMENSIONS) {
+      const agg = reports[0].dimAggregates[dim.key];
+      zones.push([dim.label, agg.average, agg.benchmark]);
+    }
   }
 
   return zones;
 }
 
 /**
- * Generate the Excel workbook and write to file.
+ * Generate the Excel workbook. Returns a workbook object.
  *
- * @param {object[]} orgs2026 - Processed 2026 org data
- * @param {object} aggregates - Computed aggregates
- * @param {string} outputPath - Output .xlsx file path
+ * @param {object[]} surveyRows - Raw parsed survey CSV rows
+ * @param {object[]} allReports - Generated report objects
+ * @returns {XLSX.WorkBook} Workbook ready for XLSX.writeFile()
  */
-export function generateExcel(orgs2026, aggregates, outputPath) {
+export function generateExcel(surveyRows, allReports) {
   const headers = buildHeaders();
-  const dataRows = orgs2026.map(buildOrgRow);
-  const summaryZones = buildSummaryZones(orgs2026, aggregates);
+
+  // Build org-name lookup for survey rows
+  const surveyByName = new Map();
+  for (const row of surveyRows) {
+    if (row.organisatie) {
+      surveyByName.set(row.organisatie.trim(), row);
+    }
+  }
+
+  // Build data rows by matching reports to their raw survey rows
+  const dataRows = allReports.map(report => {
+    const surveyRow = surveyByName.get(report.meta.orgName) || {};
+    return buildOrgRow(surveyRow, report);
+  });
+
+  const summaryZones = buildSummaryZones(allReports);
 
   // Combine all rows
   const allRows = [headers, ...dataRows, ...summaryZones];
@@ -168,6 +196,5 @@ export function generateExcel(orgs2026, aggregates, outputPath) {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Monitor 2026');
 
-  // Write file
-  XLSX.writeFile(wb, outputPath);
+  return wb;
 }

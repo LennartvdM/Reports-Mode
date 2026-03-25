@@ -1,12 +1,10 @@
 /**
  * Data extraction, transformation, and aggregation for per-org report JSON.
  *
- * Reads 2026 survey CSV and 2025 reference CSV, matches orgs between years,
+ * Receives pre-parsed CSV rows from the pipeline, matches orgs between years,
  * and produces the complete data structure needed for each org's PDF factsheet.
  */
 
-import Papa from 'papaparse';
-import { readFileSync } from 'node:fs';
 import {
   DIMENSIONS,
   QUANT_FIELDS,
@@ -54,22 +52,14 @@ function normalizeName(name) {
     .trim();
 }
 
-// ── CSV Parsing ──────────────────────────────────────────────────────────────
-
-function parseCSVFile(filePath) {
-  const text = readFileSync(filePath, 'utf-8');
-  const result = Papa.parse(text, { header: true, skipEmptyLines: true });
-  return result.data;
-}
-
 // ── 2025 Reference Data Extraction ───────────────────────────────────────────
 
 /**
  * Extract previous-year quantitative data and Likert dimension averages
- * from the 2025 reference CSV row.
+ * from a 2025 reference CSV row.
  *
  * 2025 data uses Likert 1–4 natively (no conversion needed).
- * 2025 has precomputed "Totaalscore" columns per dimension.
+ * 2025 may have precomputed "Totaalscore" columns per dimension.
  */
 function extract2025Row(row) {
   const orgName = (row[ORG_NAME_HEADER_2025] || '').trim();
@@ -113,7 +103,7 @@ function extract2025Row(row) {
     ? { total: rvcRvtTotal, be: rvcRvtBE, pct: safePct(rvcRvtBE, rvcRvtTotal) }
     : null;
 
-  // Likert dimension averages from 2025 (using Totaalscore columns or computing from items)
+  // Likert dimension averages from 2025 (Totaalscore columns or compute from items)
   const dimAverages = {};
   for (const dim of DIMENSIONS) {
     // Try to find a Totaalscore column first
@@ -235,7 +225,6 @@ function extract2026Row(row) {
 function computeAggregates(orgs2026) {
   const quantAgg = {};
 
-  // Min/gem/max for each quantitative category
   for (const rowDef of QUANT_ROWS) {
     const pcts = orgs2026
       .map(o => {
@@ -255,13 +244,11 @@ function computeAggregates(orgs2026) {
     }
   }
 
-  // Streefcijfer average (only orgs that have one)
   const streefValues = orgs2026
     .map(o => o.streefcijfer)
     .filter(v => v !== null);
   const avgStreefcijfer = streefValues.length > 0 ? round1(mean(streefValues)) : null;
 
-  // Dimension aggregates: average and benchmark (max) across all orgs
   const dimAggregates = {};
   for (const dim of DIMENSIONS) {
     const avgs = orgs2026
@@ -336,82 +323,80 @@ function buildBenchmarkTable(currentQuant, quantAgg) {
   return rows;
 }
 
-// ── Main Processing ──────────────────────────────────────────────────────────
+// ── ReportDataProcessor Class ────────────────────────────────────────────────
 
 /**
- * Process survey and reference CSV files and produce per-org report data.
+ * Main data processor. Receives pre-parsed CSV rows from the pipeline.
  *
- * @param {string} surveyPath - Path to 2026 survey CSV
- * @param {string} referencePath - Path to 2025 reference CSV (optional)
- * @returns {{ reports: object[], aggregates: object, orgs2026: object[], orgs2025: object[] }}
+ * @example
+ *   const processor = new ReportDataProcessor(surveyRows, referenceRows);
+ *   const allReports = processor.generateAllReports();
  */
-export function processData(surveyPath, referencePath) {
-  // Parse 2026 survey
-  const surveyRows = parseCSVFile(surveyPath);
-  const orgs2026 = surveyRows.map(extract2026Row).filter(Boolean);
+export class ReportDataProcessor {
+  constructor(surveyRows, referenceRows) {
+    // Extract and transform 2026 survey rows
+    this.orgs2026 = surveyRows.map(extract2026Row).filter(Boolean);
 
-  // Parse 2025 reference (if provided)
-  let orgs2025 = [];
-  if (referencePath) {
-    try {
-      const refRows = parseCSVFile(referencePath);
-      orgs2025 = refRows.map(extract2025Row).filter(Boolean);
-    } catch (err) {
-      console.warn(`Warning: Could not read reference file: ${err.message}`);
-    }
-  }
+    // Extract and transform 2025 reference rows
+    this.orgs2025 = (referenceRows || []).map(extract2025Row).filter(Boolean);
 
-  // Build name lookup for 2025 data
-  const ref2025Map = new Map();
-  for (const org of orgs2025) {
-    ref2025Map.set(org.normalizedName, org);
-  }
-
-  // Compute aggregates across all 2026 orgs
-  const { quantAgg, avgStreefcijfer, dimAggregates } = computeAggregates(orgs2026);
-
-  // Build per-org reports
-  const reports = orgs2026.map(org => {
-    // Match to previous year
-    const prev = ref2025Map.get(org.normalizedName) || null;
-
-    const meta = {
-      orgName: org.orgName,
-      year: 2026,
-      hasPreviousYear: prev !== null
-    };
-
-    const currentQuant = org.quant;
-    const previousQuant = prev ? prev.quant : null;
-
-    const yoyTable = buildYoYTable(currentQuant, previousQuant);
-    const benchmarkTable = buildBenchmarkTable(currentQuant, quantAgg);
-
-    const streefComparison = {
-      orgStreefcijfer: org.streefcijfer,
-      avgStreefcijfer,
-      orgTopPct: org.quant.top ? org.quant.top.pct : null
-    };
-
-    const currentLikert = {};
-    for (const dim of DIMENSIONS) {
-      currentLikert[dim.key] = org.likert[dim.key];
+    // Build name lookup for 2025 data
+    this.ref2025Map = new Map();
+    for (const org of this.orgs2025) {
+      this.ref2025Map.set(org.normalizedName, org);
     }
 
-    const previousLikert = prev ? prev.dimAverages : null;
+    // Compute aggregates across all 2026 orgs
+    this.aggregates = computeAggregates(this.orgs2026);
+  }
 
-    return {
-      meta,
-      currentQuant,
-      previousQuant,
-      yoyTable,
-      benchmarkTable,
-      streefComparison,
-      currentLikert,
-      previousLikert,
-      dimAggregates
-    };
-  });
+  /**
+   * Generate report data objects for all organisations.
+   * @returns {object[]} Array of per-org report objects
+   */
+  generateAllReports() {
+    const { quantAgg, avgStreefcijfer, dimAggregates } = this.aggregates;
 
-  return { reports, aggregates: { quantAgg, avgStreefcijfer, dimAggregates }, orgs2026, orgs2025 };
+    return this.orgs2026.map(org => {
+      // Match to previous year
+      const prev = this.ref2025Map.get(org.normalizedName) || null;
+
+      const meta = {
+        orgName: org.orgName,
+        year: 2026,
+        hasPreviousData: prev !== null
+      };
+
+      const currentQuant = org.quant;
+      const previousQuant = prev ? prev.quant : null;
+
+      const yoyTable = buildYoYTable(currentQuant, previousQuant);
+      const benchmarkTable = buildBenchmarkTable(currentQuant, quantAgg);
+
+      const streefComparison = {
+        orgStreefcijfer: org.streefcijfer,
+        avgStreefcijfer,
+        orgTopPct: org.quant.top ? org.quant.top.pct : null
+      };
+
+      const currentLikert = {};
+      for (const dim of DIMENSIONS) {
+        currentLikert[dim.key] = org.likert[dim.key];
+      }
+
+      const previousLikert = prev ? prev.dimAverages : null;
+
+      return {
+        meta,
+        currentQuant,
+        previousQuant,
+        yoyTable,
+        benchmarkTable,
+        streefComparison,
+        currentLikert,
+        previousLikert,
+        dimAggregates
+      };
+    });
+  }
 }
